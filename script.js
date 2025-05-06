@@ -1,3 +1,4 @@
+<script>
 document.getElementById('absence-form').addEventListener('submit', function(event) {
   event.preventDefault();
 
@@ -6,14 +7,17 @@ document.getElementById('absence-form').addEventListener('submit', function(even
   const subject = "رياضيات";
   const reason = "الخروج المؤقت";
   const movementType = document.getElementById('movement-type').value;
-  const timestamp = new Date(document.getElementById('timestamp').value);
+
+  // إصلاح: تحديد الوقت الحالي إذا ما تم اختيار وقت يدوي
+  let timestampValue = document.getElementById('timestamp').value;
+  const timestamp = timestampValue ? new Date(timestampValue) : new Date();
 
   let resultMessage = '';
 
   if (movementType === 'رجوع') {
     const exitTime = new Date(localStorage.getItem('exitTime'));
 
-    if (exitTime) {
+    if (exitTime && !isNaN(exitTime)) {
       const durationMinutes = Math.floor((timestamp - exitTime) / 60000);
       resultMessage = `
         <h2>تصريح الرجوع</h2>
@@ -30,8 +34,8 @@ document.getElementById('absence-form').addEventListener('submit', function(even
     }
 
   } else {
+    // تسجيل وقت الخروج في التخزين المحلي
     localStorage.setItem('exitTime', timestamp);
-
     resultMessage = `
       <h2>تصريح الخروج</h2>
       <p><strong>اسم الطالبة:</strong> ${studentName}</p>
@@ -45,3 +49,4 @@ document.getElementById('absence-form').addEventListener('submit', function(even
 
   document.getElementById('result').innerHTML = resultMessage;
 });
+</script>
